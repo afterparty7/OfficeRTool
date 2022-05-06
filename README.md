@@ -1,7 +1,7 @@
 # Office(R)Tool
 **Office(R)Tool Offical GitHub Page**
 
-**Tool To Install, Activate, Config - Office 2016 - 2021**
+**An advanced tool to install, activate, and config MS Office 2016, 2019, and 2021.**
 
 **Original author : ratzlefatz - Current maintainer : Mr Dino.**
 
