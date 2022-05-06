@@ -5,11 +5,11 @@
 
 **Original author : ratzlefatz - Current maintainer : Mr Dino.**
 
-**Official MDL Thread For help & support**
+**The Official MDL Thread For help & support**
 
 https://forums.mydigitallife.net/threads/84450/
 
-**Video - how to use [made by BredzPro]**
+**Guide --- how to use [made by BredzPro]**
 
 https://www.youtube.com/watch?v=DpK5R_IOqgk
 
