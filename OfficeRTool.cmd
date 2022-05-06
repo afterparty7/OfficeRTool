@@ -3,9 +3,9 @@
 	@echo off
 	>nul chcp 437
 	
-	set "Currentversion=1.7"
-	title OfficeRTool - 2022/MAY/05 -
-	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/05 -'"
+	set "Currentversion=1.8"
+	title OfficeRTool - 2022/MAY/06 -
+	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/06 -'"
 	
 	set "External_IP="
 	set "External_PORT="
