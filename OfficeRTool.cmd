@@ -3,7 +3,7 @@
 	@echo off
 	>nul chcp 437
 	
-	set "Currentversion=1.8"
+	set "Currentversion=1.9"
 	title OfficeRTool - 2022/MAY/06 -
 	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/06 -'"
 	
@@ -730,7 +730,7 @@ goto :eof
 	
 	if not defined External_IP call :STOPKMSActivation
 	call :CleanRegistryKeys
-	timeout /t 4
+	timeout /t 8
 	goto:Office16VnextInstall
 	
 ::===============================================================================================================
@@ -3622,7 +3622,7 @@ if "%_SkypeForBusiness2021Volume%" EQU "YES" ((echo:)&&	(echo Skype 2021        
 	)
 	
 	for /f "tokens=1,2 delims=: " %%x in ('"!activationCMD!"') do set "lastErr=%%y"
-	if /i '!lastErr!' EQU '0' (echo Activation !ID! successful) else (echo Activation !ID! failed & echo Error Number !lastErr!)
+	if /i '!lastErr!' EQU '0' (echo Activation !ID! successful) else (echo Activation !ID! failed [0x!lastErr!])
 	REM call :CleanRegistryKeys
 	echo ________________________________________________________________
 	echo:
