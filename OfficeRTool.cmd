@@ -3,9 +3,9 @@
 	@echo off
 	>nul chcp 437
 	
-	set "Currentversion=1.9"
-	title OfficeRTool - 2022/MAY/06 -
-	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/06 -'"
+	set "Currentversion=2.0"
+	title OfficeRTool - 2022/MAY/08 -
+	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/08 -'"
 	
 	set "External_IP="
 	set "External_PORT="
@@ -301,11 +301,33 @@
 		if !countx! GEQ 10 call :UpdateLangFromIni
 	)
 	
+	rem get rid of the not genuine banner solution by Windows_Addict
+	
+	rem first NAG ~ check for IP address On start up
+	rem https://forums.mydigitallife.net/threads/kms_vl_all-smart-activation-script.79535/page-180#post-1659178
+	
+	rem second NAG ~ check if ip address is from range of 0.0.0.0 to ?
+	rem HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\Common\Licensing\LVUXRecords
+	rem https://forums.mydigitallife.net/threads/kms_vl_all-smart-activation-script.79535/page-237#post-1734148
+	
+	rem How-to: Generate Random Numbers
+	rem https://ss64.com/nt/syntax-random.html
+	
+	Set /a rand_V=(%RANDOM%*20/32768)+1    || Add-in
+	Set /a rand_A=(%RANDOM%*255/32768)+1   || 192-255
+	Set /a rand_B=(%RANDOM%*255/32768)+1   || 168-255
+	Set /a rand_C=(%RANDOM%*255/32768)+1   || 000-255
+	Set /a rand_D=(%RANDOM%*255/32768)+1   || 000-255
+	
+	if !rand_A! LSS 192 Set /a rand_A+=192-!rand_A!+!rand_V!
+	if !rand_B! LSS 168 Set /a rand_B+=168-!rand_B!+!rand_V!
+	set "IP_ADDRESS=!rand_A!.!rand_B!.!rand_C!.!rand_D!"
+	
 	call :CleanRegistryKeys
 	%MultiNul% del /q latest*.txt
-	%MultiNul% reg add "%XSPP_USER%" /f /v KeyManagementServiceName /t REG_SZ /d "0.0.0.0"
-	%MultiNul% reg add "%XSPP_HKLM_X32%" /f /v KeyManagementServiceName /t REG_SZ /d "0.0.0.0"
-	%MultiNul% reg add "%XSPP_HKLM_X64%" /f /v KeyManagementServiceName /t REG_SZ /d "0.0.0.0"
+	%MultiNul% reg add "%XSPP_USER%"     /f /v KeyManagementServiceName /t REG_SZ /d "!IP_ADDRESS!"
+	%MultiNul% reg add "%XSPP_HKLM_X32%" /f /v KeyManagementServiceName /t REG_SZ /d "!IP_ADDRESS!"
+	%MultiNul% reg add "%XSPP_HKLM_X64%" /f /v KeyManagementServiceName /t REG_SZ /d "!IP_ADDRESS!"
 	
 	cls
 	
