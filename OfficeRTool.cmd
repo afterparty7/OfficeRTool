@@ -3,9 +3,9 @@
 	@echo off
 	>nul chcp 437
 	
-	set "Currentversion=2.0"
-	title OfficeRTool - 2022/MAY/08 -
-	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/08 -'"
+	set "Currentversion=2.01"
+	title OfficeRTool - 2022/MAY/10 -
+	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/10 -'"
 	
 	set "External_IP="
 	set "External_PORT="
@@ -2527,6 +2527,98 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 	if "%winx%" EQU "win_x32" if "!o16arch!" EQU "x64" ((echo:)&&(echo ERROR: You can't install x64/64bit Office on x86/32bit Windows)&&(echo:)&&(pause)&&(goto:InstallO16))
 ::===============================================================================================================
 :InstSuites
+	if not defined OnlineInstaller goto:InstSuites_2
+	cls
+	echo:
+	echo "Public known" standard distribution channels
+	echo Channel Name                                    - Internal Naming   Index-#
+	echo ___________________________________________________________________________
+	echo:
+	echo Current (Retail/RTM)                            - (Production::CC)      (1)
+	echo CurrentPreview (Office Insider SLOW)            - (Insiders::CC)        (2)
+	echo BetaChannel (Office Insider FAST)               - (Insiders::DEVMAIN)   (3)
+	echo MonthlyEnterprise                               - (Production::MEC)     (4)
+	echo SemiAnnual (Business)                           - (Production::DC)      (5)
+	echo SemiAnnualPreview (Business Insider)            - (Insiders::FRDC)      (6)
+	echo PerpetualVL2019                                 - (Production:LTSC)     (7)
+	echo PerpetualVL2021                                 - (Production:LTSC2021) (8)
+	echo Exit to Main Menu                                                       (X)
+	echo:
+	set /p channeltrigger=Set Channel-Index-# (1,2,3,4,5,6) or X or press return for Current ^>
+	if "%channeltrigger%" EQU "1" goto:ChanSel1X
+	if "%channeltrigger%" EQU "2" goto:ChanSel2X
+	if "%channeltrigger%" EQU "3" goto:ChanSel3X
+	if "%channeltrigger%" EQU "4" goto:ChanSel4X
+	if "%channeltrigger%" EQU "5" goto:ChanSel5X
+	if "%channeltrigger%" EQU "6" goto:ChanSel6X
+	if "%channeltrigger%" EQU "7" goto:ChanSel7X
+	if "%channeltrigger%" EQU "8" goto:ChanSel8X
+	if /I "%channeltrigger%" EQU "X" ((set "o16updlocid=not set")&&(set "o16build=not set")&&(goto:Office16VnextInstall))
+	goto :InstSuites
+	
+:ChanSel1X
+	set "o16updlocid=492350f6-3a01-4f97-b9c0-c7c6ddf67d60"
+	call :CheckNewVersion Current !o16updlocid!
+	set "distribchannel=Current"
+	set "o16build=!o16latestbuild!"	
+	goto:InstSuites_2X
+::===============================================================================================================
+:ChanSel2X
+	set "o16updlocid=64256afe-f5d9-4f86-8936-8840a6a4f5be"
+	call :CheckNewVersion CurrentPreview !o16updlocid!
+	set "distribchannel=CurrentPreview"
+	set "o16build=!o16latestbuild!"
+	goto:InstSuites_2X
+::===============================================================================================================
+:ChanSel3X
+	set "o16updlocid=5440fd1f-7ecb-4221-8110-145efaa6372f"
+	call :CheckNewVersion BetaChannel !o16updlocid!
+	set "distribchannel=BetaChannel"	
+	set "o16build=!o16latestbuild!"
+	goto:InstSuites_2X
+::===============================================================================================================
+:ChanSel4X
+	set "o16updlocid=55336b82-a18d-4dd6-b5f6-9e5095c314a6"
+	call :CheckNewVersion MonthlyEnterprise !o16updlocid!
+	set "distribchannel=MonthlyEnterprise"	
+	set "o16build=!o16latestbuild!"
+	goto:InstSuites_2X
+::===============================================================================================================
+:ChanSel5X
+	set "o16updlocid=7ffbc6bf-bc32-4f92-8982-f9dd17fd3114"
+	call :CheckNewVersion SemiAnnual !o16updlocid!
+	set "distribchannel=SemiAnnual"
+	set "o16build=!o16latestbuild!"
+	goto:InstSuites_2X
+::===============================================================================================================
+:ChanSel6X
+	set "o16updlocid=b8f9b850-328d-4355-9145-c59439a0c4cf"
+	call :CheckNewVersion SemiAnnualPreview !o16updlocid!
+	set "distribchannel=SemiAnnualPreview"
+	set "o16build=!o16latestbuild!"
+	goto:InstSuites_2X
+::===============================================================================================================
+:ChanSel7X
+	set "o16updlocid=f2e724c1-748f-4b47-8fb8-8e0d210e9208"
+	call :CheckNewVersion PerpetualVL2019 !o16updlocid!
+	set "distribchannel=PerpetualVL2019"
+	set "o16build=!o16latestbuild!"
+	goto:InstSuites_2X
+::===============================================================================================================
+:ChanSel8X
+	set "o16updlocid=5030841d-c919-4594-8d2d-84ae4f96e58e"
+	call :CheckNewVersion PerpetualVL2021 !o16updlocid!
+	set "distribchannel=PerpetualVL2021"
+	set "o16build=!o16latestbuild!"
+	goto:InstSuites_2X
+
+:InstSuites_2X
+	echo "!o16latestbuild!"|>nul find /i "not set" && (
+		if not defined debugMode pause
+		goto :Office16VnextInstall
+	)
+
+:InstSuites_2
 	set "instmethod=XML"
 	cd /D "%OfficeRToolpath%"
 	cls
@@ -2565,38 +2657,38 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 	set /p installtrigger=Enter 1..9,0 or x to exit ^>
 	if /I "%installtrigger%" EQU "X" goto:Office16VnextInstall
 	
-	if defined OnlineInstaller (
+	REM if defined OnlineInstaller (
 	
-		set "o16latestbuild="
+		REM set "o16latestbuild="
 	
-		set "o16updlocid=492350f6-3a01-4f97-b9c0-c7c6ddf67d60"
-		set "distribchannel=Current"
-		call :CheckNewVersion Current !o16updlocid!
-		set "o16build=!o16latestbuild!"
+		REM set "o16updlocid=492350f6-3a01-4f97-b9c0-c7c6ddf67d60"
+		REM set "distribchannel=Current"
+		REM call :CheckNewVersion Current !o16updlocid!
+		REM set "o16build=!o16latestbuild!"
 		
-		echo !o16latestbuild!|>nul find /i "not set" && (
-			pause
-			goto :Office16VnextInstall
-		)
+		REM echo !o16latestbuild!|>nul find /i "not set" && (
+			REM pause
+			REM goto :Office16VnextInstall
+		REM )
 		
-		if /I "%installtrigger%" EQU "2" set "o16updlocid=f2e724c1-748f-4b47-8fb8-8e0d210e9208"
-		if /I "%installtrigger%" EQU "8" set "o16updlocid=f2e724c1-748f-4b47-8fb8-8e0d210e9208"
-		if /i "!o16updlocid!" EQU "f2e724c1-748f-4b47-8fb8-8e0d210e9208" (
-			set "type=Volume"
-			set "distribchannel=PerpetualVL2019"
-			call :CheckNewVersion PerpetualVL2019 !o16updlocid!
-			set "o16build=!o16latestbuild!"
-		)
+		REM if /I "%installtrigger%" EQU "2" set "o16updlocid=f2e724c1-748f-4b47-8fb8-8e0d210e9208"
+		REM if /I "%installtrigger%" EQU "8" set "o16updlocid=f2e724c1-748f-4b47-8fb8-8e0d210e9208"
+		REM if /i "!o16updlocid!" EQU "f2e724c1-748f-4b47-8fb8-8e0d210e9208" (
+			REM set "type=Volume"
+			REM set "distribchannel=PerpetualVL2019"
+			REM call :CheckNewVersion PerpetualVL2019 !o16updlocid!
+			REM set "o16build=!o16latestbuild!"
+		REM )
 		
-		if /I "%installtrigger%" EQU "3" set "o16updlocid=5030841d-c919-4594-8d2d-84ae4f96e58e"
-		if /I "%installtrigger%" EQU "9" set "o16updlocid=5030841d-c919-4594-8d2d-84ae4f96e58e"
-		if /i "!o16updlocid!" EQU "5030841d-c919-4594-8d2d-84ae4f96e58e" (
-			set "type=Volume"
-			set "distribchannel=PerpetualVL2021"
-			call :CheckNewVersion PerpetualVL2021 !o16updlocid!
-			set "o16build=!o16latestbuild!"
-		)
-	)
+		REM if /I "%installtrigger%" EQU "3" set "o16updlocid=5030841d-c919-4594-8d2d-84ae4f96e58e"
+		REM if /I "%installtrigger%" EQU "9" set "o16updlocid=5030841d-c919-4594-8d2d-84ae4f96e58e"
+		REM if /i "!o16updlocid!" EQU "5030841d-c919-4594-8d2d-84ae4f96e58e" (
+			REM set "type=Volume"
+			REM set "distribchannel=PerpetualVL2021"
+			REM call :CheckNewVersion PerpetualVL2021 !o16updlocid!
+			REM set "o16build=!o16latestbuild!"
+		REM )
+	REM )
 	
 	if "%installtrigger%" EQU "0" (goto:SingleAppsInstall)
 	if "%installtrigger%" EQU "1" ((set "type=Retail")&&(set "of16install=1")&&(goto:InstallExclusions))
@@ -2619,12 +2711,12 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 	if %win% GEQ 9600 if "%installtrigger%" EQU "3" if %o16build:~5,5% GEQ 14000 goto:SingleApps2021Install
 	goto:InstSuites
 :SingleApps2016Install
-	if defined OnlineInstaller (
-		set "distribchannel=Current"
-		set "o16updlocid=492350f6-3a01-4f97-b9c0-c7c6ddf67d60"
-		call :CheckNewVersion Current !o16updlocid!
-		set "o16build=!o16latestbuild!"
-	)
+	REM if defined OnlineInstaller (
+		REM set "distribchannel=Current"
+		REM set "o16updlocid=492350f6-3a01-4f97-b9c0-c7c6ddf67d60"
+		REM call :CheckNewVersion Current !o16updlocid!
+		REM set "o16build=!o16latestbuild!"
+	REM )
 	echo:
 	set /p wd16install=Set Word 2016 Single App Install (Enter-Continue/#-Install) ^>
 	if /I "%wd16install%" EQU "X" goto:Office16VnextInstall
@@ -2644,13 +2736,13 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 	if /I "%sk16install%" EQU "X" goto:Office16VnextInstall
 	goto:InstVi16Pr16
 :SingleApps2019Install
-	if defined OnlineInstaller (
-		set "type=Volume"
-		set "o16updlocid=f2e724c1-748f-4b47-8fb8-8e0d210e9208"
-		set "distribchannel=PerpetualVL2019"
-		call :CheckNewVersion PerpetualVL2019 !o16updlocid!
-		set "o16build=!o16latestbuild!"
-	)
+	REM if defined OnlineInstaller (
+		REM set "type=Volume"
+		REM set "o16updlocid=f2e724c1-748f-4b47-8fb8-8e0d210e9208"
+		REM set "distribchannel=PerpetualVL2019"
+		REM call :CheckNewVersion PerpetualVL2019 !o16updlocid!
+		REM set "o16build=!o16latestbuild!"
+	REM )
 	echo:
 	set /p wd19install=Set Word 2019 Single App Install (Enter-Continue/#-Install) ^>
 	if /I "%wd19install%" EQU "X" goto:Office16VnextInstall
@@ -2668,13 +2760,13 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 	if /I "%sk19install%" EQU "X" goto:Office16VnextInstall
 	goto:InstVi19Pr19
 :SingleApps2021Install
-	if defined OnlineInstaller (
-		set "type=Volume"
-		set "o16updlocid=5030841d-c919-4594-8d2d-84ae4f96e58e"
-		set "distribchannel=PerpetualVL2021"
-		call :CheckNewVersion PerpetualVL2021 !o16updlocid!
-		set "o16build=!o16latestbuild!"
-	)
+	REM if defined OnlineInstaller (
+		REM set "type=Volume"
+		REM set "o16updlocid=5030841d-c919-4594-8d2d-84ae4f96e58e"
+		REM set "distribchannel=PerpetualVL2021"
+		REM call :CheckNewVersion PerpetualVL2021 !o16updlocid!
+		REM set "o16build=!o16latestbuild!"
+	REM )
 	echo:
 	set /p wd21install=Set Word 2021 Single App Install (Enter-Continue/#-Install) ^>
 	if /I "%wd21install%" EQU "X" goto:Office16VnextInstall
@@ -5071,7 +5163,7 @@ Rem abbodi1406 KMS VL ALL LOCAL ACTIVATION
 :STARTKMSActivation
 set SSppHook=0
 set KMSPort=1688
-set KMSHostIP=0.0.0.0
+set KMSHostIP=!IP_ADDRESS!
 set KMS_RenewalInterval=10080
 set KMS_ActivationInterval=120
 set KMS_HWID=0x3A1C049600B60076
@@ -5231,7 +5323,7 @@ if %OsppHook% EQU 0 (
 reg delete "%IFEO%\%1" /f %MultiNul%
 )
 if %OsppHook% NEQ 0 for %%A in (Debugger,VerifierDlls,VerifierDebug,VerifierFlags,GlobalFlag,KMS_Emulation,KMS_ActivationInterval,KMS_RenewalInterval,Office2010,Office2013,Office2016,Office2019) do reg delete "%IFEO%\%1" /v %%A /f %MultiNul%
-reg add "HKLM\%OPPk%" /f /v KeyManagementServiceName /t REG_SZ /d "0.0.0.0" %MultiNul%
+reg add "HKLM\%OPPk%" /f /v KeyManagementServiceName /t REG_SZ /d "!IP_ADDRESS!" %MultiNul%
 reg add "HKLM\%OPPk%" /f /v KeyManagementServicePort /t REG_SZ /d "1688" %MultiNul%
 goto :eof
 
