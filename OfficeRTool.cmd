@@ -5,11 +5,12 @@
 	setLocal EnableExtensions EnableDelayedExpansion
 	
 	color 0F
+	call :GetPID
 	mode con cols=140 lines=45
 	
 	set "Currentversion=2.02"
 	title OfficeRTool - 2022/MAY/10 -
-	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/10 -'"
+	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: !Title!'"
 	
 	rem Run as administrator, AveYo: ps\VBS version
 	>nul fltmc || ( set "_=call "%~dpfx0" %*"
@@ -411,6 +412,33 @@
  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
+:GetPID
+
+rem GetPID.cmd
+rem https://social.msdn.microsoft.com/Forums/en-US/270f0842-963d-4ed9-b27d-27957628004c/what-is-the-pid-of-the-current-cmdexe?forum=msbuild
+
+rem Note: Session Name for privileged Administrative consoles is sometimes blank.
+set "PID="
+set SESSIONNAME=Console
+
+rem Instance Set
+set "instance=%DATE% %TIME% %RANDOM%"
+REM echo Instance: "%instance%"
+title %instance%
+
+rem PID Find
+for /f "usebackq tokens=2" %%a in (`tasklist /FO list /FI "SESSIONNAME eq %SESSIONNAME%" /FI "USERNAME eq %USERNAME%" /FI "WINDOWTITLE eq %instance%" ^| find /i "PID:"`) do set "PID=%%a"
+if not defined PID for /f "usebackq tokens=2" %%a in (`tasklist /FO list /FI "SESSIONNAME eq %SESSIONNAME%" /FI "USERNAME eq %USERNAME%" /FI "WINDOWTITLE eq Administrator:  %instance%" ^| find /i "PID:"`) do set PID=%%a
+REM if not defined PID echo !Error: Could not determine the Process ID of the current script.  Exiting.& exit /b 1
+
+rem Current Task Show
+REM echo PID: "%PID%"
+REM tasklist /v /FO list /FI "PID eq %PID%"
+
+rem Title Reset to Image Name (Image Name can contain spaces and will not be tokenized through usage of * token and %%b variable to access the remaining line without tokenization.)
+REM for /f "usebackq tokens=2*" %%a in (`tasklist /V /FO list /FI "PID eq %PID%" ^| find /i "Image Name:"`) do title %%b
+goto :eof
+
 :GetLatestVersion
 	if not defined TAG (
 		cls
@@ -425,9 +453,14 @@
 	call :PrintTitle "================== Download Latest Release ===================="
 	
 	if defined TAG echo:&echo Download Latest Release --- v%TAG%
-	if defined OfficeRToolLink 2>nul %wget% --quiet --no-check-certificate --content-disposition --output-document="%USERPROFILE%\DESKTOP\%FileName%" "%OfficeRToolLink%"
-	timeout /t 4 
-	goto:Office16VnextInstall
+	if defined OfficeRToolLink 2>nul %wget% --quiet --no-check-certificate --content-disposition --output-document="%temp%\%FileName%" "%OfficeRToolLink%"
+	
+	if exist "%temp%\%FileName%" if defined PID (
+		>nul copy /y "%~dp0OfficeFixes\SelfUpdate.cmd" "%temp%"
+		start "" /wait /min "cmd" /c call "%temp%\SelfUpdate.cmd" "!PID!" "%temp%\%FileName%" "%~dp0"
+	)
+	
+	goto :Office16VnextInstall
 
 :GenerateIMGLink
 	if "%of16install%" NEQ "0" (
