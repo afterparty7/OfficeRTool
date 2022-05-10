@@ -8,9 +8,9 @@
 	call :GetPID
 	mode con cols=140 lines=45
 	
-	set "Currentversion=2.02"
-	title OfficeRTool - 2022/MAY/10 -
-	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: !Title!'"
+	set "Currentversion=2.03"
+	title OfficeRTool - 2022/MAY/11 -
+	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/11 -'"
 	
 	rem Run as administrator, AveYo: ps\VBS version
 	>nul fltmc || ( set "_=call "%~dpfx0" %*"
