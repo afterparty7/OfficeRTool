@@ -2,15 +2,30 @@
 	@cls
 	@echo off
 	>nul chcp 437
+	setLocal EnableExtensions EnableDelayedExpansion
 	
-	set "Currentversion=2.01"
+	color 0F
+	mode con cols=140 lines=45
+	
+	set "Currentversion=2.02"
 	title OfficeRTool - 2022/MAY/10 -
 	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/10 -'"
 	
-	set "External_IP="
-	set "External_PORT="
+	rem Run as administrator, AveYo: ps\VBS version
+	>nul fltmc || ( set "_=call "%~dpfx0" %*"
+		powershell -nop -c start cmd -args '/d/x/r',$env:_ -verb runas || (
+		mshta vbscript:execute^("createobject(""shell.application"").shellexecute(""cmd"",""/d/x/r "" &createobject(""WScript.Shell"").Environment(""PROCESS"")(""_""),,""runas"",1)(window.close)"^))|| (
+		cls & echo:& echo Script elavation failed& pause)
+		exit )
+		
+::===============================================================================================================
+:: Set Settings
+::===============================================================================================================
 	
 	:---------------------------------------------:
+	
+	set "External_IP="
+	set "External_PORT="
 	
 	REM By remove REM before this lines
 	REM You can use Remote Server / Online Servers
@@ -20,14 +35,84 @@
 	
 	:---------------------------------------------:
 	
+	set debugMode=
+	set inidownpath=
+	set inidownarch=
+	set inidownlang=
+	set DontSaveToIni=true
+	set AutoSaveToIni=true
+	
 	set "SingleNul=>nul"
 	set "SingleNulV1=1>nul"
 	set "SingleNulV2=2>nul"
 	set "SingleNulV3=3>nul"
 	set "MultiNul=1>nul 2>&1"
 	set "TripleNul=1>nul 2>&1 3>&1"
-	setLocal EnableExtensions EnableDelayedExpansion
 	
+	set "OfficeRToolpath=%~dp0"
+	set "OfficeRToolpath=%OfficeRToolpath:~0,-1%"
+	set "OfficeRToolname=%~n0.cmd"
+	
+	set OSPP_HKLM=HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\OfficeSoftwareProtectionPlatform
+	set OSPP_USER=HKEY_USERS\S-1-5-20\SOFTWARE\Microsoft\OfficeSoftwareProtectionPlatform
+	set XSPP_HKLM_X32=HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform
+	set XSPP_HKLM_X64=HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform
+	set XSPP_USER=HKEY_USERS\S-1-5-20\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform
+	
+	if /i "%*" 	EQU "-debug" (
+		echo on
+		set "SingleNul="
+		set "SingleNulV1="
+		set "SingleNulV2="
+		set "SingleNulV3="
+		set "MultiNul="
+		set "TripleNul="
+		set "debugMode=on"
+	)
+
+::===============================================================================================================
+:: Security check
+::===============================================================================================================
+	
+	echo "%~dp0"|%SingleNul% findstr /L "%% # & ^ ^^ @ $ ~ ! ( )" && (
+	echo.
+	Echo Invalid path: "%~dp0"
+	Echo Remove special symbols: "%% # & ^ @ $ ~ ! ( )"
+	if not defined debugMode pause
+	exit /b
+	) || cd /d "%OfficeRToolpath%"
+	
+	echo.
+	set "missingFiles="
+	set "binDLL=A64.dll SvcTrigger.xml x64.dll x86.dll"
+	for %%# in (!binDLL!) do if not exist "OfficeFixes\bin\%%#" echo OfficeFixes\bin\%%# IS Missing & set "missingFiles=true"
+	if defined missingFiles ( echo. & pause & exit /b ) else ( cls )
+	
+	echo. >"OfficeFixes\dummyfile" && %SingleNul% del /q "OfficeFixes\dummyfile" || (
+		cls
+		echo.
+		echo ERROR ### Read Only Folder
+		echo.
+		if not defined debugMode pause
+		exit /b
+	)
+	
+	set "WSH_Disabled=" & for %%$ in (HKCU, HKLM) do 2>nul reg query "%%$\Software\Microsoft\Windows Script Host\Settings" /v "Enabled" | >nul find /i "0x0" && set "WSH_Disabled=***"
+	if defined WSH_Disabled for %%$ in (HKCU, HKLM) do %MultiNul% REG DELETE "%%$\SOFTWARE\Microsoft\Windows Script Host\Settings" /f /v Enabled
+	set "WSH_Disabled=" & for %%$ in (HKCU, HKLM) do 2>nul reg query "%%$\Software\Microsoft\Windows Script Host\Settings" /v "Enabled" | >nul find /i "0x0" && set "WSH_Disabled=***"
+	if defined WSH_Disabled (
+		cls
+		echo.
+		echo ERROR ### Windows script host is disabled
+		echo.
+		if not defined debugMode pause
+		exit /b
+	)
+		
+::===============================================================================================================
+:: Verify version
+::===============================================================================================================
+		
 	rem Based on Using Powershell To Retrieve Latest Package Url From Github Releases
 	rem https://copdips.com/2019/12/Using-Powershell-to-retrieve-latest-package-url-from-github-releases.html
 	
@@ -49,93 +134,9 @@
 	if defined URI echo "%URI:~59%" | >nul findstr /r [0-9].[0-9][0-9] 			&& set "TAG=%URI:~59%"
 	if defined TAG set "OfficeRToolLink=%GitHub%/download/%tag%/%FileName%"
 	
-	if /i "%*" 	EQU "-debug" (
-		echo on
-		set "SingleNul="
-		set "SingleNulV1="
-		set "SingleNulV2="
-		set "SingleNulV3="
-		set "MultiNul="
-		set "TripleNul="
-		set "debugMode=on"
-	)
-
-	set debugMode=
-	set inidownpath=
-	set inidownarch=
-	set inidownlang=
-	set DontSaveToIni=true
-	set AutoSaveToIni=true
-	
-	set "OfficeRToolpath=%~dp0"
-	set "OfficeRToolpath=%OfficeRToolpath:~0,-1%"
-	set "OfficeRToolname=%~n0.cmd"
-	
-	color 0F
-	mode con cols=140 lines=45
-	
-	echo "%~dp0"|%SingleNul% findstr /L "%% # & ^ ^^ @ $ ~ ! ( )" && (
-	echo.
-	Echo Invalid path: "%~dp0"
-	Echo Remove special symbols: "%% # & ^ @ $ ~ ! ( )"
-	if not defined debugMode pause
-	exit /b
-	) || cd /d "%OfficeRToolpath%"
-	
-	echo. >"OfficeFixes\dummyfile" && %SingleNul% del /q "OfficeFixes\dummyfile" || (
-		cls
-		echo.
-		echo ERROR ### Read Only Folder
-		echo.
-		if not defined debugMode pause
-		exit /b
-	)
-	
-	echo.
-	set "missingFiles="
-	set "binDLL=A64.dll SvcTrigger.xml x64.dll x86.dll"
-	for %%# in (!binDLL!) do if not exist "OfficeFixes\bin\%%#" echo OfficeFixes\bin\%%# IS Missing & set "missingFiles=true"
-	if defined missingFiles ( echo. & pause & exit /b ) else ( cls )
-	
-	set OSPP_HKLM=HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\OfficeSoftwareProtectionPlatform
-	set OSPP_USER=HKEY_USERS\S-1-5-20\SOFTWARE\Microsoft\OfficeSoftwareProtectionPlatform
-	set XSPP_HKLM_X32=HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform
-	set XSPP_HKLM_X64=HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform
-	set XSPP_USER=HKEY_USERS\S-1-5-20\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform
-
-	rem Run as administrator, AveYo: ps\VBS version
-	>nul fltmc || ( set "_=call "%~dpfx0" %*"
-		powershell -nop -c start cmd -args '/d/x/r',$env:_ -verb runas || (
-		mshta vbscript:execute^("createobject(""shell.application"").shellexecute(""cmd"",""/d/x/r "" &createobject(""WScript.Shell"").Environment(""PROCESS"")(""_""),,""runas"",1)(window.close)"^))|| (
-		cls & echo:& echo Script elavation failed& pause)
-		exit )
-		
-	set "WSH_Disabled=" & for %%$ in (HKCU, HKLM) do 2>nul reg query "%%$\Software\Microsoft\Windows Script Host\Settings" /v "Enabled" | >nul find /i "0x0" && set "WSH_Disabled=***"
-	if defined WSH_Disabled for %%$ in (HKCU, HKLM) do %MultiNul% REG DELETE "%%$\SOFTWARE\Microsoft\Windows Script Host\Settings" /f /v Enabled
-	set "WSH_Disabled=" & for %%$ in (HKCU, HKLM) do 2>nul reg query "%%$\Software\Microsoft\Windows Script Host\Settings" /v "Enabled" | >nul find /i "0x0" && set "WSH_Disabled=***"
-	if defined WSH_Disabled (
-		cls
-		echo.
-		echo ERROR ### Windows script host is disabled
-		echo.
-		if not defined debugMode pause
-		exit /b
-	)
-	
-	%MultiNul% del /q latest*.txt
-	
-	if /i "%*" EQU "-debug" (
-		echo on
-		set "SingleNul="
-		set "SingleNulV1="
-		set "SingleNulV2="
-		set "SingleNulV3="
-		set "MultiNul="
-		set "TripleNul="
-		set "debugMode=on"
-		call :debugMode
-		exit /b
-	)
+::===============================================================================================================
+:: Colour script
+::===============================================================================================================
 	
 	rem Check if ANSI Colors is supported
 	rem https://ss64.com/nt/syntax-ansi.html
@@ -179,7 +180,8 @@
 	set "FF_Black=0" & set "FF_Red=C" & set "FF_Green=A"
 	set "FF_Yellow=E" & set "FF_Blue=9" & set "FF_Magenta=D"
 	set "FF_White=F" & set "FF_Gray=8" & set "FF_Aqua=B"
-	goto :debugMode
+	
+	goto :zNext
 	
 	:UseANSIColors
 	
@@ -213,18 +215,26 @@
 	set "FF_Black=100m" & set "FF_Red=101m" & set "FF_Green=102m"
 	set "FF_Yellow=103m" & set "FF_Blue=104m" & set "FF_Magenta=105m"
 	set "FF_Cyan=106m" & set "FF_White=107m"
+	
+	goto :zNext
 
+::===============================================================================================================
+:: Debug mode
+::===============================================================================================================
+
+:zNext
+
+	if /i "%*" EQU "-debug" (
+		call :debugMode
+		exit /b
+	)
+	
 :debugMode
 
 ::===============================================================================================================
-::===============================================================================================================
-	cls
-	mode con cols=140 lines=45
-	color 0F
-	echo:
-::===============================================================================================================
 :: DEFINE SYSTEM ENVIRONMENT
 ::===============================================================================================================
+	
 	for /F "tokens=6 delims=[]. " %%A in ('ver') do set /a win=%%A
 	if %win% LSS 7601 (echo:)&&(echo:)&&(echo Unsupported Windows detected)&&(echo:)&&(echo Minimum OS must be Windows 7 SP1 or better)&&(echo:)&&(goto:TheEndIsNear)
 	
@@ -252,6 +262,7 @@
 	
 	call :Get-WinUserLanguageList_Warper
 	
+	echo:
 	cd /D "%OfficeRToolpath%"
 	if not exist OfficeRTool.ini (
 		set "CreateIniFile="
@@ -275,6 +286,7 @@
 	)
 	
 ::===============================================================================================================
+:: Office(R)Tool Main Menu
 ::===============================================================================================================
 
 :Office16VnextInstall
