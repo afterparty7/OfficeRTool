@@ -16,14 +16,6 @@
 	unrar x -y "%~2" * "%~3"
 	del /q "%~2"
 	
-	if exist "%~3OfficeRTool.cmd" (
-		start "" "cmd" /c call "%~3OfficeRTool.cmd"
-		exit /b
-	)
-	
-	if exist "%~3\OfficeRTool.cmd" (
-		start "" "cmd" /c call "%~3\OfficeRTool.cmd"
-		exit /b
-	)
-	goto :eof
+	start "" "cmd" /c call "%~3OfficeRTool.cmd"
+	exit /b
 	
