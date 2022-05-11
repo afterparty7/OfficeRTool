@@ -8,7 +8,7 @@
 	call :GetPID
 	mode con cols=140 lines=45
 	
-	set "Currentversion=2.03"
+	set "Currentversion=2.04"
 	title OfficeRTool - 2022/MAY/11 -
 	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/11 -'"
 	
@@ -342,7 +342,7 @@
 	
     echo:
 	call :PrintTitle "================== OFFICE DOWNLOAD AND INSTALL ============================="
-	if defined TAG echo:&echo Current Release :: v!CurrentVersion! --- Latest Release  :: v!TAG!
+	if defined TAG echo:&echo Latest Release  :: v!TAG! --- Current Release :: v!CurrentVersion!
 	echo:
 	call :Print "[H] SCRUB OFFICE" "%BB_Blue%"
 	echo:
@@ -368,19 +368,19 @@
 	echo:
 	call :Print "[S] CREATE ISO IMAGE FROM OFFLINE INSTALL PACKAGE-IMAGE" "%BB_Red%"
 	echo:
-	call :Print "[F] CHECK FOR NEW VERSION" "%BB_Blue%"
-	echo:
-	call :Print "[G] DOWNLOAD LATEST RELEASE" "%BB_Blue%"
-	echo:
 	call :Print "[V] ENABLE VISUAL UI [WITH LTSC LOGO]" "%BB_Blue%"
 	echo:
 	call :Print "[X] ENABLE VISUAL UI [WITH 365  LOGO]" "%BB_Blue%"
+	echo:
+	call :Print "[F] CHECK PUBLIC OFFICE DISTRIBUTION CHANNELS" "%BB_Blue%"
 	echo:
 	call :Print "[T] DISABLE ACQUISITION AND SENDING OF TELEMETRY DATA" "%BB_Blue%"
 	echo:
 	call :Print "[U] CHANGE OFFICE UPDATE-PATH (SWITCH DISTRIBUTION CHANNEL)" "%BB_Blue%"
 	echo:
-	call :Print "[E] END - STOP AND LEAVE PROGRAM" "%BB_Magenta%"
+	call :Print "[G] DOWNLOAD LATEST RELEASE" "%BB_Magenta%"	
+	echo:
+	call :Print "[E] LEAVE THE PROGRAM" "%BB_Magenta%"
 	echo:
 	
 	if defined debugMode (echo 00Y | choice)
