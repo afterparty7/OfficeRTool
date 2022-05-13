@@ -46,3 +46,9 @@ Invoke-WebRequest -Uri $realDownloadUrl -OutFile $OutputFile
 [Environment]::Exit(1)
 [Environment]::Exit(1)
 ````
+
+# About teamos-hkrg
+Please do not download anything from there
+Just ban me after a complain them
+About post that 990 people download
+And it was an Infected Activator
