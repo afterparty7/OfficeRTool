@@ -8,7 +8,7 @@
 [**The Official MDL Thread For help & support**](https://forums.mydigitallife.net/threads/84450/
 )
 
-[**Guide --- how to use [made by BredzPro]**](https://www.youtube.com/watch?v=DpK5R_IOqgk)
+[**How to install and activate Microsoft Office 365 / 2021 / 2019 for FREE**](https://www.youtube.com/watch?v=DpK5R_IOqgk)
 
 # Main Changes
 
