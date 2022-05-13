@@ -8,9 +8,9 @@
 	call :GetPID
 	mode con cols=140 lines=45
 	
-	set "Currentversion=2.04"
-	title OfficeRTool - 2022/MAY/11 -
-	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/11 -'"
+	set "Currentversion=2.05"
+	title OfficeRTool - 2022/MAY/13 -
+	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/13 -'"
 	
 	rem Run as administrator, AveYo: ps\VBS version
 	>nul fltmc || ( set "_=call "%~dpfx0" %*"
@@ -412,6 +412,38 @@
  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
+:export
+rem AveYo's :export text attachments snippet
+setlocal enabledelayedexpansion || Prints all text between lines starting with :NAME:[ and :NAME:] - A pure batch snippet by AveYo
+set [=&for /f "delims=:" %%s in ('findstr/nbrc:":%~1:\[" /c:":%~1:\]" "%~f0"') do if defined [ (set/a ]=%%s-3) else set/a [=%%s-1
+<"%~fs0" ((for /l %%i in (0 1 %[%) do set /p =)&for /l %%i in (%[% 1 %]%) do (set txt=&set /p txt=&echo(!txt!)) &endlocal &exit/b
+
+:SelfUpdate:[
+	@cls
+	@echo off
+	>nul chcp 437
+	setLocal EnableExtensions EnableDelayedExpansion
+	
+	rem Run as Admin with native shell, any path, params, loop guard, minimal i/o, by AveYo
+	>nul reg add hkcu\software\classes\.Admin\shell\runas\command /f /ve /d "cmd /x /d /r set \"f0=%%2\" &call \"%%2\" %%3" & set "_= %*"
+	>nul fltmc || if "%f0%" neq "%~f0" ( cd.>"%tmp%\runas.Admin" & start "%~n0" /high /min "%tmp%\runas.Admin" "%~f0" "%_:"=""%" &exit /b )
+
+	timeout 2
+	taskkill /PID %~1
+	copy /y "%~3OfficeFixes\win_x32\*RAR*.*" "%temp%"
+	rd/s/q "%~3"
+	md "%~3"
+	pushd "%temp%"
+	unrar x -y "%~2" * "%~3"
+	del /q "%~2"
+	
+	del /q *RAR*.*
+	
+	start "" "cmd" /c call "%~3OfficeRTool.cmd"
+	del /q "%~f0"
+	exit /b
+:SelfUpdate:]
+
 :GetPID
 
 rem GetPID.cmd
@@ -456,7 +488,7 @@ goto :eof
 	if defined OfficeRToolLink 2>nul %wget% --quiet --no-check-certificate --content-disposition --output-document="%temp%\%FileName%" "%OfficeRToolLink%"
 	
 	if exist "%temp%\%FileName%" if defined PID (
-		>nul copy /y "%~dp0OfficeFixes\SelfUpdate.cmd" "%temp%"
+		call :export SelfUpdate > "%temp%\SelfUpdate.cmd"
 		start "" /wait /min "cmd" /c call "%temp%\SelfUpdate.cmd" "!PID!" "%temp%\%FileName%" "%~dp0"
 	)
 	
