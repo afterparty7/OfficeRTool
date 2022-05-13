@@ -55,4 +55,6 @@ Just ban me after a complain them
 
 About post that 990 people download
 
-And it was an Infected Activator
+And it was actually an Infected Activator
+
+Save your computer .. don't enter their site
