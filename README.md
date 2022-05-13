@@ -1,17 +1,14 @@
 # Office(R)Tool
-**Office(R)Tool Offical GitHub Page**
+**MDL PROJECT Office(R)Tool Offical GitHub Page**
 
 **An advanced tool to install, activate, and config MS Office 2016, 2019, and 2021.**
 
 **Original author : ratzlefatz - Current maintainer : Mr Dino.**
 
-**The Official MDL Thread For help & support**
+[**The Official MDL Thread For help & support**](https://forums.mydigitallife.net/threads/84450/
+)
 
-https://forums.mydigitallife.net/threads/84450/
-
-**Guide --- how to use [made by BredzPro]**
-
-https://www.youtube.com/watch?v=DpK5R_IOqgk
+[**Guide --- how to use [made by BredzPro]**](https://www.youtube.com/watch?v=DpK5R_IOqgk)
 
 # Main Changes
 
