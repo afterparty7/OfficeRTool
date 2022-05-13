@@ -49,12 +49,12 @@ Invoke-WebRequest -Uri $realDownloadUrl -OutFile $OutputFile
 
 # About teamos-hkrg
 
-Please do not download anything from there
+**Please do not download anything from there**
 
-Just ban me after a complain them
+**Just ban me after a complain them**
 
-About post that 990 people download
+**About post that 990 people download**
 
-And it was actually an Infected Activator
+**And it was actually an Infected Activator**
 
-Save your computer .. don't enter their site
+**Save your computer .. don't enter their site**
