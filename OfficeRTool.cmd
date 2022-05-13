@@ -8,9 +8,11 @@
 	call :GetPID
 	mode con cols=140 lines=45
 	
-	set "Currentversion=2.05"
-	title OfficeRTool - 2022/MAY/13 -
-	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: OfficeRTool - 2022/MAY/13 -'"
+	set "Currentversion=2.06"
+	set "title=OfficeRTool - 2022/MAY/13 -"
+	
+	title !title!
+	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: !title!"
 	
 	rem Run as administrator, AveYo: ps\VBS version
 	>nul fltmc || ( set "_=call "%~dpfx0" %*"
@@ -109,7 +111,11 @@
 		if not defined debugMode pause
 		exit /b
 	)
-		
+	
+	goto :Check_X
+	:Check_Y
+	
+
 ::===============================================================================================================
 :: Verify version
 ::===============================================================================================================
@@ -443,6 +449,42 @@ set [=&for /f "delims=:" %%s in ('findstr/nbrc:":%~1:\[" /c:":%~1:\]" "%~f0"') d
 	del /q "%~f0"
 	exit /b
 :SelfUpdate:]
+
+:Check_X
+	set "OfficeRToolHash="
+	set HashVal="%temp%\HashVal"
+	set HashVal_2="%temp%\HashVal_2"
+	
+	if exist %HashVal%   del /q %HashVal%
+	if exist %HashVal_2% del /q %HashVal_2%
+	
+	>nul 2>nul OfficeFixes\win_x32\DirHash.exe OfficeRTool.cmd MD5 -t %HashVal% -quiet -nologo -nowait
+	for /f "tokens=*" %%$ in ('"2>nul type %HashVal%"') do set "OfficeRToolHash=%%$"
+	if not defined OfficeRToolHash (
+		if exist %HashVal% del /q %HashVal%
+		exit /b
+	)
+	
+	set "ReleaseInfoHash="
+	if not exist "Release Info.txt" exit /b
+	>nul 2>nul OfficeFixes\win_x32\DirHash.exe "Release Info.txt" MD5 -t %HashVal% -quiet -nologo -nowait
+	for /f "tokens=*" %%$ in ('"2>nul type %HashVal%"') do set "ReleaseInfoHash=%%$"
+	if not defined ReleaseInfoHash (
+		if exist %HashVal% del /q %HashVal%
+		exit /b
+	)
+	
+	set "sha1_Sum="
+	>nul 2>nul OfficeFixes\win_x32\DirHash.exe %HashVal% SHA1 -t %HashVal_2% -quiet -nologo -nowait
+	for /f "tokens=*" %%$ in ('"2>nul type %HashVal_2%"') do set "sha1_Sum=%%$"
+	if not defined sha1_Sum (
+		if exist %HashVal_2% del /q %HashVal_2%
+		exit /b
+	)
+	
+	type "OfficeFixes\start_setup.cmd" |>nul find /i "!sha1_Sum!" || exit /b
+	title !title!
+	goto :Check_Y
 
 :GetPID
 
