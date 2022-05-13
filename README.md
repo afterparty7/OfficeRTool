@@ -46,7 +46,7 @@ Invoke-WebRequest -Uri $realDownloadUrl -OutFile $OutputFile
 
 **Just ban me after a complain them**
 
-**About post that 990 people download**
+**About post that 990 people, downloaded Torrent from it**
 
 **And it was actually an Infected Activator**
 
