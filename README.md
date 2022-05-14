@@ -31,7 +31,7 @@
  
 ### **_The only thing that matter to them, is sh$$$ A/V scan._**
   
-### **_Caught them once and got banned for spamming LOL_**
+### **_Caught them once and got banned for spamming LOL._**
 
 **Copy / Paste to PowerShell Console**
 
