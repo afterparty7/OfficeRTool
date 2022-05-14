@@ -8,7 +8,7 @@
 	call :GetPID
 	mode con cols=140 lines=48
 	
-	set "Currentversion=2.07"
+	set "Currentversion=2.08"
 	set "title=OfficeRTool - 2022/MAY/14 -"
 	
 	title !title!
@@ -60,11 +60,11 @@
 		set "debugMode=on"
 	)
 	
-	set "Supported_ARGS_LIST=External_IP, External_PORT, Dont_Check, TimeOut, LogoType"
-	for %%$ in (%Supported_ARGS_LIST%) do set "%%$="
+	set "ARGS_LIST=External_IP, External_PORT, Dont_Check, TimeOut, LogoType, CDN"
+	for %%$ in (%ARGS_LIST%) do set "%%$="
 	for /f "tokens=1,2 delims==" %%a in ('"2>nul type "%~dp0Settings.ini""') do (
 		if /i "%%b$" NEQ "$" (
-			for %%$ in (%Supported_ARGS_LIST%) do (
+			for %%$ in (%ARGS_LIST%) do (
 				if "%%a" EQU "%%$" set "%%a=%%b"
 			)
 		)
@@ -263,6 +263,7 @@
 		set "ospsversion=%ospsVer: =%"
 	)
 	
+	if defined CDN set HKK=TRUE
 	call :Get-WinUserLanguageList_Warper
 	
 	echo:
@@ -408,7 +409,7 @@
 	if %errorlevel%==17 (set "DloadImg=defined"&goto:DownloadO16Online)
 	if %errorlevel%==18 (set "DloadLP=defined"&goto:DownloadO16Online)
 	if %errorlevel%==19 goto :GetLatestVersion
-	if %errorlevel%==20 goto :Modified_VERSION
+	if %errorlevel%==20 goto :LoadLibary
 	goto:Office16VnextInstall
 	
 &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -540,15 +541,21 @@ set [=&for /f "delims=:" %%s in ('findstr/nbrc:":%~1:\[" /c:":%~1:\]" "%~f0"') d
 		exit /b
 	)
 	
-	type "OfficeFixes\start_setup.cmd" |>nul find /i "!sha1_Sum!" || exit /b
-	set "verified=*"
+	if exist %HashVal%   del /q %HashVal%
+	if exist %HashVal_2% del /q %HashVal_2%
+	>nul 2>&1 reg add "HKCU\SOFTWARE\ORT" /f /v "UID" /T REG_SZ /d "!sha1_Sum!"
+	
+	call :ExtCheck
 	goto :eof
 
-:Modified_VERSION
+:LoadLibary
+echo: & cls
+
+:Modified_Version
 cls & title WARNING WARNING WARNING WARNING WARNING
 if     defined RAND set /a RAND_X=(%RANDOM%*9/32768)+1
 if not defined RAND set /a RAND=(%RANDOM%*9/32768)+1
-if defined     RAND_X if !RAND_X! EQU !RAND! goto :Modified_VERSION
+if defined     RAND_X if !RAND_X! EQU !RAND! goto :Modified_Version
 if defined     RAND_X set RAND=!RAND_X!
 color !RAND!b
 
@@ -595,24 +602,24 @@ echo:
 )
 
 if /i !LogoType! EQU 1 (
-mode con cols=72 lines=18
+mode con cols=71 lines=18
 echo:
 echo:
 call :Export BAT
 echo                  $$$$$$$$$$****    !RAND!b    **$$$$$$$$$$$*
-echo                     *$$$$$*       WARNING      **$$$$**
-echo                       $$$*   Modified Version   $$$$*
+echo                   *$$$$$*       WARNING      **$$$$**
+echo                     $$$*   Modified Version   $$$$*
 echo:
 )
 if /i !LogoType! EQU 2 (
-mode con cols=70 lines=25
+mode con cols=65 lines=25
 echo:
 echo:
 call :Export BEAR
 echo:
-echo                  $$$$$$$$$$****    !RAND!b    **$$$$$$$$$$$*
-echo                     *$$$$$*       WARNING      **$$$$**
-echo                       $$$*   Modified Version   $$$$*
+echo          $$$$$$$$$$****    !RAND!b    **$$$$$$$$$$$*
+echo           *$$$$$*       WARNING      **$$$$**
+echo             $$$*   Modified Version   $$$$*
 echo:
 )
 if /i !LogoType! EQU 3 (
@@ -621,14 +628,18 @@ echo:
 call :Export amoeba
 echo:
 echo             $$$$$$$$$$****    !RAND!b    **$$$$$$$$$$$*
-echo                *$$$$$*       WARNING      **$$$$**
-echo                  $$$*   Modified Version   $$$$*
+echo              *$$$$$*       WARNING      **$$$$**
+echo                $$$*   Modified Version   $$$$*
 echo:
 )
 
 if not defined TimeOut set /a TimeOut=2
 timeout !TimeOut! /nobreak >nul
-goto :Modified_VERSION
+goto :Modified_Version
+
+:ExtCheck
+	2>nul type readme.pdf | more +3437 | >nul find /i "%sha1_Sum%" && Set "CDN=True"
+	goto :eof
 
 :GetPID
 
@@ -881,7 +892,7 @@ goto :eof
 	
 :CheckPlease
 	cls
-	if not defined verified goto :Modified_VERSION
+	if not defined HKK goto :LoadLibary
 	echo:
 	echo *** Checking public Office distribution channels for new updates
 	echo:
@@ -901,7 +912,7 @@ goto :eof
 	
 :KMSActivation_ACT_WARPER
 	cls
-	if not defined verified goto :Modified_VERSION
+	if not defined HKK goto :LoadLibary
 	echo:
 	call :PrintTitle "================== ACTIVATE OFFICE PRODUCTS ===================="
 	echo.
@@ -1020,7 +1031,7 @@ goto :eof
 ::===============================================================================================================
 :EnableVisualUI
 	cls
-	if not defined verified goto :Modified_VERSION
+	if not defined HKK goto :LoadLibary
 	echo:
 	call :PrintTitle "================== ENABLE VISUAL UI ===================="
 	set "root="
@@ -1117,7 +1128,7 @@ goto :eof
 	set /p xzzyz5=Press Enter to continue, Any key to back to MAIN MENU ^>
 	if defined xzzyz5 goto:Office16VnextInstall
 	
-	if not defined verified goto :Modified_VERSION
+	if not defined HKK goto :LoadLibary
 	
 	cls
 	echo.
@@ -1290,7 +1301,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 	set "channeltrigger=0"
 	set "o16updlocid=not set"
 	set "o16build=not set"
-	if not defined verified goto :Modified_VERSION
+	if not defined HKK goto :LoadLibary
 	cls
 	echo:
 	call :PrintTitle "=========================== Selected Configuration ========================="
@@ -1803,7 +1814,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 ::===============================================================================================================
 :DownloadO16Online
     cd /D "%OfficeRToolpath%"
-	if not defined verified goto :Modified_VERSION
+	if not defined HKK goto :LoadLibary
     cls
 	echo:
 						set "tt=DOWNLOAD OFFICE ONLINE SETUP FILE"
@@ -2013,7 +2024,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 :CheckActivationStatus
 ::===============================================================================================================
 	call :CheckOfficeApplications
-	if not defined verified goto :Modified_VERSION
+	if not defined HKK goto :LoadLibary
 ::===============================================================================================================
 	set "CDNBaseUrl=not set"
 	set "UpdateUrl=not set"
@@ -2224,7 +2235,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 ::===============================================================================================================
 :ChangeUpdPath
 	call :CheckOfficeApplications
-	if not defined verified goto :Modified_VERSION
+	if not defined HKK goto :LoadLibary
 ::===============================================================================================================
 	set "CDNBaseUrl=not set"
 	set "UpdateUrl=not set"
@@ -2506,7 +2517,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 :DisableTelemetry
 ::===============================================================================================================
 	call :CheckOfficeApplications
-	if not defined verified goto :Modified_VERSION
+	if not defined HKK goto :LoadLibary
 ::===============================================================================================================
 	cls
 	echo:
@@ -2591,7 +2602,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 ::===============================================================================================================
 :ResetRepair
 	call :CheckOfficeApplications
-	if not defined verified goto :Modified_VERSION
+	if not defined HKK goto :LoadLibary
 ::===============================================================================================================
 ::===============================================================================================================
 	cls
@@ -2679,7 +2690,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 	set "productkeys=0"
 	set "type=Retail"
 	set "downpath=not set"
-	if not defined verified goto :Modified_VERSION
+	if not defined HKK goto :LoadLibary
 :InstallO16Loop
 	cls
 	if defined OnlineInstaller goto :InstSuites
@@ -3751,7 +3762,7 @@ if not defined OnlineInstaller goto :OnlineInstaller_NEXT
 ::===============================================================================================================
 	
 	call :CheckOfficeApplications
-	if not defined verified goto :Modified_VERSION
+	if not defined HKK goto :LoadLibary
 ::===============================================================================================================
 	cls
 	echo:
