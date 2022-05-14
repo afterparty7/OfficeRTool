@@ -492,12 +492,15 @@ set [=&for /f "delims=:" %%s in ('findstr/nbrc:":%~1:\[" /c:":%~1:\]" "%~f0"') d
 
 	timeout 2
 	taskkill /PID %~1
+	attrib "%~3Settings.ini" -r -a -s -h
+	attrib "%temp%\Settings.ini" -r -a -s -h
 	copy /y "%~3OfficeFixes\win_x32\*RAR*.*" "%temp%"
 	copy /y "%~3Settings.ini" "%temp%"
 	rd/s/q "%~3"
 	md "%~3"
 	pushd "%temp%"
 	unrar x -y "%~2" * "%~3"
+	attrib "%~3Settings.ini" -r -a -s -h
 	copy /y Settings.ini "%~3"
 	
 	del /q "%~2"
