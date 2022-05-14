@@ -8,8 +8,8 @@
 	call :GetPID
 	mode con cols=140 lines=45
 	
-	set "Currentversion=2.06"
-	set "title=OfficeRTool - 2022/MAY/13 -"
+	set "Currentversion=2.07"
+	set "title=OfficeRTool - 2022/MAY/14 -"
 	
 	title !title!
 	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: !title!"
@@ -24,19 +24,6 @@
 ::===============================================================================================================
 :: Set Settings
 ::===============================================================================================================
-	
-	:---------------------------------------------:
-	
-	set "External_IP="
-	set "External_PORT="
-	
-	REM By remove REM before this lines
-	REM You can use Remote Server / Online Servers
-	
-	REM set "External_IP=0.0.0.0" || Server IP
-	REM set "External_PORT=1688"  || Server Port
-	
-	:---------------------------------------------:
 	
 	set debugMode=
 	set inidownpath=
@@ -71,6 +58,16 @@
 		set "MultiNul="
 		set "TripleNul="
 		set "debugMode=on"
+	)
+	
+	set "Supported_ARGS_LIST=External_IP, External_PORT, Dont_Check"
+	for %%$ in (%Supported_ARGS_LIST%) do set "%%$="
+	for /f "tokens=1,2 delims==" %%a in ('"2>nul type "%~dp0Settings.ini""') do (
+		if /i "%%b$" NEQ "$" (
+			for %%$ in (%Supported_ARGS_LIST%) do (
+				if "%%a" EQU "%%$" set "%%a=%%b"
+			)
+		)
 	)
 
 ::===============================================================================================================
@@ -114,7 +111,6 @@
 	
 	goto :Check_X
 	:Check_Y
-	
 
 ::===============================================================================================================
 :: Verify version
@@ -122,7 +118,7 @@
 		
 	rem Based on Using Powershell To Retrieve Latest Package Url From Github Releases
 	rem https://copdips.com/2019/12/Using-Powershell-to-retrieve-latest-package-url-from-github-releases.html
-	
+	if defined Dont_Check if "!Dont_Check!" EQU "1" goto :Dont_Check 
 	Set TAG=
 	set URI=
 	set OfficeRToolLink=
@@ -140,7 +136,7 @@
 	if defined URI echo "%URI:~59%" | >nul findstr /r [0-9][0-9].[0-9] 			&& set "TAG=%URI:~59%"
 	if defined URI echo "%URI:~59%" | >nul findstr /r [0-9].[0-9][0-9] 			&& set "TAG=%URI:~59%"
 	if defined TAG set "OfficeRToolLink=%GitHub%/download/%tag%/%FileName%"
-	
+	:Dont_Check
 ::===============================================================================================================
 :: Colour script
 ::===============================================================================================================
@@ -437,13 +433,16 @@ set [=&for /f "delims=:" %%s in ('findstr/nbrc:":%~1:\[" /c:":%~1:\]" "%~f0"') d
 	timeout 2
 	taskkill /PID %~1
 	copy /y "%~3OfficeFixes\win_x32\*RAR*.*" "%temp%"
+	copy /y "%~3Settings.ini" "%temp%"
 	rd/s/q "%~3"
 	md "%~3"
 	pushd "%temp%"
 	unrar x -y "%~2" * "%~3"
-	del /q "%~2"
+	copy /y Settings.ini "%~3"
 	
+	del /q "%~2"
 	del /q *RAR*.*
+	del /q Settings.ini
 	
 	start "" "cmd" /c call "%~3OfficeRTool.cmd"
 	del /q "%~f0"
