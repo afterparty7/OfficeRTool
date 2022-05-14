@@ -1,4 +1,3 @@
-
 if WScript.Arguments.Item(0)="/QUERY_BASIC" Then
 
 	on error resume next
