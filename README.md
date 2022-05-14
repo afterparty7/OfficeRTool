@@ -27,9 +27,11 @@
 # How to get the latest release
 ### **_Dont download from any other site, Use this P/S command Only._**
 
- ### **_Also Beware of any release from teamos-hkrg.com, which is full of malware._**
+### **_Also Beware of any release from teamos-hkrg.com, which is full of malware._**
  
-  ### **_The only thing that matter to them, is sh$$$ A/V scan. Caught them once and got banned ?!?!_**
+### **_The only thing that matter to them, is sh$$$ A/V scan._**
+  
+### **_Caught them once and got banned for spamming LOL_**
 
 **Copy / Paste to PowerShell Console**
 
