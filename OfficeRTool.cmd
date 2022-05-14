@@ -3105,8 +3105,8 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 	set /p bsbsdisable=Disable Bing Search Background Service Install (Enter-Continue/#-Disable) ^>
 	if /I "%bsbsdisable%" EQU "X" goto:Office16VnextInstall
 ::===============================================================================================================
-	if "%of36install%" NEQ "0" goto:InstVi19Pr19
-	if "%ofbsinstall%" NEQ "0" goto:InstVi19Pr19
+	if "%of36install%" NEQ "0" goto:InstVi21Pr21
+	if "%ofbsinstall%" NEQ "0" goto:InstVi21Pr21
 	if "%of19install%" NEQ "0" goto:InstVi19Pr19
 	if "%of21install%" NEQ "0" goto:InstVi21Pr21
 :InstVi16Pr16
