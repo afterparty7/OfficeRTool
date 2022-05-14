@@ -23,7 +23,7 @@
 # How to get the latest release
 **Dont download from any other site, Use this P/S command Only.**
 
-**Also Beware of any release from teamos-hkrg.com, which is full of malware.**
+ ### **_Also Beware of any release from teamos-hkrg.com, which is full of malware._**
 
 **Copy / Paste to PowerShell Console**
 
