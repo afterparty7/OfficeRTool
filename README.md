@@ -21,7 +21,7 @@
 - Special Thanks to abbodi1406 for script advice Inc. VBS core file & Activation script / DLL
 
 # How to get the latest release
-**Dont download from any other site, Use this P/S command Only.**
+### **_Dont download from any other site, Use this P/S command Only._**
 
  ### **_Also Beware of any release from teamos-hkrg.com, which is full of malware._**
 
