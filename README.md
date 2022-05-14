@@ -25,7 +25,7 @@
 
  ### **_Also Beware of any release from teamos-hkrg.com, which is full of malware._**
  
-  ### **_The only thing that matter to them, is sh$$$ A/V scan._**
+  ### **_The only thing that matter to them, is sh$$$ A/V scan. Caught them once and got banned ?!?!_**
 
 **Copy / Paste to PowerShell Console**
 
