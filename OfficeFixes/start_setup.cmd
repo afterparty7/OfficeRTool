@@ -1,7 +1,7 @@
 @cls
 @echo off
 setLocal EnableExtensions EnableDelayedExpansion
-set verificationCode=891B8F526B23408A8C2C9A00901820C68FB5C1B3
+set verificationCode=8B5B2C19CFE79C019565D705A69CC167B73C2688
 
 set "installfolder=%~dp0"
 set "installfolder=%installfolder:~0,-1%"
