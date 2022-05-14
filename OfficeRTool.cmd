@@ -6,7 +6,7 @@
 	
 	color 0F
 	call :GetPID
-	mode con cols=140 lines=45
+	mode con cols=140 lines=48
 	
 	set "Currentversion=2.07"
 	set "title=OfficeRTool - 2022/MAY/14 -"
@@ -60,7 +60,7 @@
 		set "debugMode=on"
 	)
 	
-	set "Supported_ARGS_LIST=External_IP, External_PORT, Dont_Check"
+	set "Supported_ARGS_LIST=External_IP, External_PORT, Dont_Check, TimeOut, LogoType"
 	for %%$ in (%Supported_ARGS_LIST%) do set "%%$="
 	for /f "tokens=1,2 delims==" %%a in ('"2>nul type "%~dp0Settings.ini""') do (
 		if /i "%%b$" NEQ "$" (
@@ -380,13 +380,15 @@
 	echo:
 	call :Print "[U] CHANGE OFFICE UPDATE-PATH (SWITCH DISTRIBUTION CHANNEL)" "%BB_Blue%"
 	echo:
+	call :Print "[J] GENERATE MODIFIED VERSION ERROR" "%BB_Magenta%"
+	echo:
 	call :Print "[G] DOWNLOAD LATEST RELEASE" "%BB_Magenta%"	
 	echo:
 	call :Print "[E] LEAVE THE PROGRAM" "%BB_Magenta%"
 	echo:
 	
 	if defined debugMode (echo 00Y | choice)
-    CHOICE /C DSICKAUTOREHVXNFMLG /N /M "YOUR CHOICE ?"
+    CHOICE /C DSICKAUTOREHVXNFMLGJ /N /M "YOUR CHOICE ?"
     if %errorlevel%==1 goto:DownloadO16Offline
 	if %errorlevel%==2 set "createIso=defined"&goto:InstallO16
 	if %errorlevel%==3 goto:InstallO16
@@ -406,6 +408,7 @@
 	if %errorlevel%==17 (set "DloadImg=defined"&goto:DownloadO16Online)
 	if %errorlevel%==18 (set "DloadLP=defined"&goto:DownloadO16Online)
 	if %errorlevel%==19 goto :GetLatestVersion
+	if %errorlevel%==20 goto :Modified_VERSION
 	goto:Office16VnextInstall
 	
 &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -420,6 +423,62 @@ setlocal enabledelayedexpansion || Prints all text between lines starting with :
 set [=&for /f "delims=:" %%s in ('findstr/nbrc:":%~1:\[" /c:":%~1:\]" "%~f0"') do if defined [ (set/a ]=%%s-3) else set/a [=%%s-1
 <"%~fs0" ((for /l %%i in (0 1 %[%) do set /p =)&for /l %%i in (%[% 1 %]%) do (set txt=&set /p txt=&echo(!txt!)) &endlocal &exit/b
 
+:amoeba:[
+                           ,,,,,,,,
+                         ,|||````||||
+                   ,,,,|||||       ||,
+                ,||||```````       `||
+              ,|||`                 |||,
+              ||`     ....,          `|||
+              ||     ::::::::          |||,
+              ||     :::::::'     ||    ``|||,
+              ||,     :::::'               `|||
+              `||,                           |||
+               `|||,       ||          ||    ,||
+                 `||                        |||`
+                  ||                   ,,,||||
+                  ||              ,||||||```
+                 ,||         ,,|||||`
+                ,||`   ||   |||`
+               |||`         ||
+              ,||           ||
+              ||`           ||
+              |||,         |||
+               `|||,,    ,|||
+                 ``||||||||`
+:amoeba:]
+:BEAR:[
+        :"'._..---.._.'";
+        `.             .'
+        .'    ^   ^    `.
+       :      a   a      :                 __....._
+       :     _.-0-._     :---'""'"-....--'"        '.
+        :  .'   :   `.  :                          `,`.
+         `.: '--'--' :.'                             ; ;
+          : `._`-'_.'                                ;.'
+          `.   '"'                                   ;
+           `.               '                        ;
+            `.     `        :           `            ;
+             .`.    ;       ;           :           ;
+           .'    `-.'      ;            :          ;`.
+       __.'      .'      .'              :        ;   `.
+     .'      __.'      .'`--..__      _._.'      ;      ;
+     `......'        .'         `'""'`.'        ;......-'
+    jgs    `.......-'                 `........'
+:BEAR:]
+:BAT:[
+        ,*-~"`^"*u_                                _u*"^`"~-*,
+     p!^       /  jPw                            w9j \        ^!p
+   w^.._      /      "\_                      _/"     \        _.^w
+        *_   /          \_      _    _      _/         \     _* 
+          q /           / \q   ( `--` )   p/ \          \   p
+          jj5****._    /    ^\_) o  o (_/^    \    _.****6jj
+                   *_ /      "==) ;; (=="      \ _*
+                    `/.w***,   /(    )\   ,***w.\"
+                     ^ ilmk ^c/ )    ( \c^      ^
+                             'V')_)(_('V'
+                                 `` ``
+:BAT:]
 :SelfUpdate:[
 	@cls
 	@echo off
@@ -485,20 +544,35 @@ set [=&for /f "delims=:" %%s in ('findstr/nbrc:":%~1:\[" /c:":%~1:\]" "%~f0"') d
 	set "verified=*"
 	goto :eof
 
-:Modified_Version
-cls
-color 4b
-title 
-mode con cols=60 lines=30
+:Modified_VERSION
+cls & title WARNING WARNING WARNING WARNING WARNING
+if     defined RAND set /a RAND_X=(%RANDOM%*9/32768)+1
+if not defined RAND set /a RAND=(%RANDOM%*9/32768)+1
+if defined     RAND_X if !RAND_X! EQU !RAND! goto :Modified_VERSION
+if defined     RAND_X set RAND=!RAND_X!
+color !RAND!b
 
+if not defined LogoType set /a LogoType=0
+if defined LogoType if /i "!LogoType!" NEQ "0" if /i "!LogoType!" NEQ "1" if /i "!LogoType!" NEQ "2" if /i "!LogoType!" NEQ "3"  set /a LogoType=4
+if /i "!LogoType!" EQU "4" Set /a LogoType=(%RANDOM%*3/32768)+1
+
+rem petya_skull.txt
+rem https://gist.github.com/shadowvex/aca39e38b17a992cb99547806c1a3917
+
+rem ASCII Art Archive
+rem https://www.asciiart.eu/animals
+
+if /i !LogoType! EQU 0 (
+mode con cols=60 lines=30
+echo:
 echo:
 echo                        uu$:$:$:$:$:$uu
 echo                     uu$$$$$$$$$$$$$$$$$uu
 echo                    u$$$$$$$$$$$$$$$$$$$$$u
-echo                    u$$$$$$$$$$$$$$$$$$$$$$$u
+echo                   uu$$$$$$$$$$$$$$$$$$$$$$$
 echo                  u$$$$$$$$$$$$$$$$$$$$$$$$$u
-echo                  u$$$$$$$$$$$$$$$$$$$$$$$$$u
-echo                  u$$$$$$*   *$$$*   *$$$$$$u
+echo                  u$$$$$$$$$$$$$$$$$$$$$$$$$u   
+echo                  u$$$$$$*   *$$$*   *$$$$$$u 
 echo                  *$$$$*      u$u       $$$$*
 echo                   $$$u       u$u       u$$$
 echo                   $$$u      u$$$u      u$$$
@@ -514,13 +588,47 @@ echo            $$$$***$$$$$$$$$$uuu   uu$$$$$$$$$***$$$*
 echo            ***      **$$$$$$$$$$$uu **$***
 echo                     uuuu **$$$$$$$$$$uuu
 echo            u$$$uuu$$$$$$$$$uu **$$$$$$$$$$$uuu$$$
-echo            $$$$$$$$$$****           **$$$$$$$$$$$*
+echo            $$$$$$$$$$****    !RAND!b    **$$$$$$$$$$$*
 echo              *$$$$$*       WARNING      **$$$$**
 echo                $$$*   Modified Version   $$$$*
 echo:
-echo              $$$$ Press ANY KEY to continue $$$$
-pause>nul
-exit /b
+)
+
+if /i !LogoType! EQU 1 (
+mode con cols=72 lines=18
+echo:
+echo:
+call :Export BAT
+echo                  $$$$$$$$$$****    !RAND!b    **$$$$$$$$$$$*
+echo                     *$$$$$*       WARNING      **$$$$**
+echo                       $$$*   Modified Version   $$$$*
+echo:
+)
+if /i !LogoType! EQU 2 (
+mode con cols=70 lines=25
+echo:
+echo:
+call :Export BEAR
+echo:
+echo                  $$$$$$$$$$****    !RAND!b    **$$$$$$$$$$$*
+echo                     *$$$$$*       WARNING      **$$$$**
+echo                       $$$*   Modified Version   $$$$*
+echo:
+)
+if /i !LogoType! EQU 3 (
+mode con cols=65 lines=30
+echo:
+call :Export amoeba
+echo:
+echo             $$$$$$$$$$****    !RAND!b    **$$$$$$$$$$$*
+echo                *$$$$$*       WARNING      **$$$$**
+echo                  $$$*   Modified Version   $$$$*
+echo:
+)
+
+if not defined TimeOut set /a TimeOut=2
+timeout !TimeOut! /nobreak >nul
+goto :Modified_VERSION
 
 :GetPID
 
@@ -773,7 +881,7 @@ goto :eof
 	
 :CheckPlease
 	cls
-	if not defined verified goto :Modified_Version
+	if not defined verified goto :Modified_VERSION
 	echo:
 	echo *** Checking public Office distribution channels for new updates
 	echo:
@@ -793,7 +901,7 @@ goto :eof
 	
 :KMSActivation_ACT_WARPER
 	cls
-	if not defined verified goto :Modified_Version
+	if not defined verified goto :Modified_VERSION
 	echo:
 	call :PrintTitle "================== ACTIVATE OFFICE PRODUCTS ===================="
 	echo.
@@ -912,7 +1020,7 @@ goto :eof
 ::===============================================================================================================
 :EnableVisualUI
 	cls
-	if not defined verified goto :Modified_Version
+	if not defined verified goto :Modified_VERSION
 	echo:
 	call :PrintTitle "================== ENABLE VISUAL UI ===================="
 	set "root="
@@ -1009,7 +1117,7 @@ goto :eof
 	set /p xzzyz5=Press Enter to continue, Any key to back to MAIN MENU ^>
 	if defined xzzyz5 goto:Office16VnextInstall
 	
-	if not defined verified goto :Modified_Version
+	if not defined verified goto :Modified_VERSION
 	
 	cls
 	echo.
@@ -1182,7 +1290,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 	set "channeltrigger=0"
 	set "o16updlocid=not set"
 	set "o16build=not set"
-	if not defined verified goto :Modified_Version
+	if not defined verified goto :Modified_VERSION
 	cls
 	echo:
 	call :PrintTitle "=========================== Selected Configuration ========================="
@@ -1695,7 +1803,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 ::===============================================================================================================
 :DownloadO16Online
     cd /D "%OfficeRToolpath%"
-	if not defined verified goto :Modified_Version
+	if not defined verified goto :Modified_VERSION
     cls
 	echo:
 						set "tt=DOWNLOAD OFFICE ONLINE SETUP FILE"
@@ -1905,7 +2013,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 :CheckActivationStatus
 ::===============================================================================================================
 	call :CheckOfficeApplications
-	if not defined verified goto :Modified_Version
+	if not defined verified goto :Modified_VERSION
 ::===============================================================================================================
 	set "CDNBaseUrl=not set"
 	set "UpdateUrl=not set"
@@ -2116,7 +2224,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 ::===============================================================================================================
 :ChangeUpdPath
 	call :CheckOfficeApplications
-	if not defined verified goto :Modified_Version
+	if not defined verified goto :Modified_VERSION
 ::===============================================================================================================
 	set "CDNBaseUrl=not set"
 	set "UpdateUrl=not set"
@@ -2398,7 +2506,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 :DisableTelemetry
 ::===============================================================================================================
 	call :CheckOfficeApplications
-	if not defined verified goto :Modified_Version
+	if not defined verified goto :Modified_VERSION
 ::===============================================================================================================
 	cls
 	echo:
@@ -2483,7 +2591,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 ::===============================================================================================================
 :ResetRepair
 	call :CheckOfficeApplications
-	if not defined verified goto :Modified_Version
+	if not defined verified goto :Modified_VERSION
 ::===============================================================================================================
 ::===============================================================================================================
 	cls
@@ -2571,7 +2679,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 	set "productkeys=0"
 	set "type=Retail"
 	set "downpath=not set"
-	if not defined verified goto :Modified_Version
+	if not defined verified goto :Modified_VERSION
 :InstallO16Loop
 	cls
 	if defined OnlineInstaller goto :InstSuites
@@ -3643,7 +3751,7 @@ if not defined OnlineInstaller goto :OnlineInstaller_NEXT
 ::===============================================================================================================
 	
 	call :CheckOfficeApplications
-	if not defined verified goto :Modified_Version
+	if not defined verified goto :Modified_VERSION
 ::===============================================================================================================
 	cls
 	echo:
