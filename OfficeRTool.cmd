@@ -12,7 +12,7 @@
 	set "title=OfficeRTool - 2022/MAY/14 -"
 	
 	title !title!
-	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: !title!"
+	set "pswindowtitle=$Host.UI.RawUI.WindowTitle = 'Administrator: !title!'"
 	
 	rem Run as administrator, AveYo: ps\VBS version
 	>nul fltmc || ( set "_=call "%~dpfx0" %*"
@@ -109,8 +109,8 @@
 		exit /b
 	)
 	
-	goto :Check_X
-	:Check_Y
+	call :Verify_HASH
+	title !title!
 
 ::===============================================================================================================
 :: Verify version
@@ -449,7 +449,7 @@ set [=&for /f "delims=:" %%s in ('findstr/nbrc:":%~1:\[" /c:":%~1:\]" "%~f0"') d
 	exit /b
 :SelfUpdate:]
 
-:Check_X
+:Verify_HASH
 	set "OfficeRToolHash="
 	set HashVal="%temp%\HashVal"
 	set HashVal_2="%temp%\HashVal_2"
@@ -482,8 +482,45 @@ set [=&for /f "delims=:" %%s in ('findstr/nbrc:":%~1:\[" /c:":%~1:\]" "%~f0"') d
 	)
 	
 	type "OfficeFixes\start_setup.cmd" |>nul find /i "!sha1_Sum!" || exit /b
-	title !title!
-	goto :Check_Y
+	set "verified=*"
+	goto :eof
+
+:Modified_Version
+cls
+color 4b
+title 
+mode con cols=60 lines=30
+
+echo:
+echo                        uu$:$:$:$:$:$uu
+echo                     uu$$$$$$$$$$$$$$$$$uu
+echo                    u$$$$$$$$$$$$$$$$$$$$$u
+echo                    u$$$$$$$$$$$$$$$$$$$$$$$u
+echo                  u$$$$$$$$$$$$$$$$$$$$$$$$$u
+echo                  u$$$$$$$$$$$$$$$$$$$$$$$$$u
+echo                  u$$$$$$*   *$$$*   *$$$$$$u
+echo                  *$$$$*      u$u       $$$$*
+echo                   $$$u       u$u       u$$$
+echo                   $$$u      u$$$u      u$$$
+echo                    *$$$$uu$$$   $$$uu$$$$*
+echo                     *$$$$$$$*   *$$$$$$$*
+echo                       u$$$$$$$u$$$$$$$u
+echo                        u$*$*$*$*$*$*$u
+echo             uuu        $$u$ $ $ $ $u$$       uuu
+echo            u$$$$        $$u$u$u$u$u$$       u$$$$
+echo             $$$$$uu      *$$$$$$$$$*     uu$$$$$$
+echo            u$$$$$$$$$$$      *****    uuuu$$$$$$$$$
+echo            $$$$***$$$$$$$$$$uuu   uu$$$$$$$$$***$$$*
+echo            ***      **$$$$$$$$$$$uu **$***
+echo                     uuuu **$$$$$$$$$$uuu
+echo            u$$$uuu$$$$$$$$$uu **$$$$$$$$$$$uuu$$$
+echo            $$$$$$$$$$****           **$$$$$$$$$$$*
+echo              *$$$$$*       WARNING      **$$$$**
+echo                $$$*   Modified Version   $$$$*
+echo:
+echo              $$$$ Press ANY KEY to continue $$$$
+pause>nul
+exit /b
 
 :GetPID
 
@@ -736,6 +773,7 @@ goto :eof
 	
 :CheckPlease
 	cls
+	if not defined verified goto :Modified_Version
 	echo:
 	echo *** Checking public Office distribution channels for new updates
 	echo:
@@ -755,6 +793,7 @@ goto :eof
 	
 :KMSActivation_ACT_WARPER
 	cls
+	if not defined verified goto :Modified_Version
 	echo:
 	call :PrintTitle "================== ACTIVATE OFFICE PRODUCTS ===================="
 	echo.
@@ -873,6 +912,7 @@ goto :eof
 ::===============================================================================================================
 :EnableVisualUI
 	cls
+	if not defined verified goto :Modified_Version
 	echo:
 	call :PrintTitle "================== ENABLE VISUAL UI ===================="
 	set "root="
@@ -968,6 +1008,8 @@ goto :eof
 	set "xzzyz5="
 	set /p xzzyz5=Press Enter to continue, Any key to back to MAIN MENU ^>
 	if defined xzzyz5 goto:Office16VnextInstall
+	
+	if not defined verified goto :Modified_Version
 	
 	cls
 	echo.
@@ -1140,6 +1182,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 	set "channeltrigger=0"
 	set "o16updlocid=not set"
 	set "o16build=not set"
+	if not defined verified goto :Modified_Version
 	cls
 	echo:
 	call :PrintTitle "=========================== Selected Configuration ========================="
@@ -1652,6 +1695,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 ::===============================================================================================================
 :DownloadO16Online
     cd /D "%OfficeRToolpath%"
+	if not defined verified goto :Modified_Version
     cls
 	echo:
 						set "tt=DOWNLOAD OFFICE ONLINE SETUP FILE"
@@ -1861,6 +1905,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 :CheckActivationStatus
 ::===============================================================================================================
 	call :CheckOfficeApplications
+	if not defined verified goto :Modified_Version
 ::===============================================================================================================
 	set "CDNBaseUrl=not set"
 	set "UpdateUrl=not set"
@@ -2071,6 +2116,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 ::===============================================================================================================
 :ChangeUpdPath
 	call :CheckOfficeApplications
+	if not defined verified goto :Modified_Version
 ::===============================================================================================================
 	set "CDNBaseUrl=not set"
 	set "UpdateUrl=not set"
@@ -2352,6 +2398,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 :DisableTelemetry
 ::===============================================================================================================
 	call :CheckOfficeApplications
+	if not defined verified goto :Modified_Version
 ::===============================================================================================================
 	cls
 	echo:
@@ -2436,6 +2483,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 ::===============================================================================================================
 :ResetRepair
 	call :CheckOfficeApplications
+	if not defined verified goto :Modified_Version
 ::===============================================================================================================
 ::===============================================================================================================
 	cls
@@ -2523,6 +2571,7 @@ if defined checknewVersion powershell -noprofile -command "%pswindowtitle%"; Wri
 	set "productkeys=0"
 	set "type=Retail"
 	set "downpath=not set"
+	if not defined verified goto :Modified_Version
 :InstallO16Loop
 	cls
 	if defined OnlineInstaller goto :InstSuites
@@ -3594,6 +3643,7 @@ if not defined OnlineInstaller goto :OnlineInstaller_NEXT
 ::===============================================================================================================
 	
 	call :CheckOfficeApplications
+	if not defined verified goto :Modified_Version
 ::===============================================================================================================
 	cls
 	echo:
