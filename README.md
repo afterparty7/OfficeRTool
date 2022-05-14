@@ -1,5 +1,5 @@
 # Office(R)Tool
-[**MDL PROJECT Office(R)Tool**](https://forums.mydigitallife.net/threads/84450/) **Offical GitHub Page**
+**MDL PROJECT** [**Office(R)Tool**](https://forums.mydigitallife.net/threads/84450/) **Offical GitHub Page**
 
 **Original author : ratzlefatz - Current maintainer : Mr Dino.**
 
@@ -39,15 +39,3 @@ Invoke-WebRequest -Uri $realDownloadUrl -OutFile $OutputFile
 [Environment]::Exit(1)
 [Environment]::Exit(1)
 ````
-
-# About teamos-hkrg
-
-**Please do not download anything from there**
-
-**Just ban me after a complain them**
-
-**About post that 990 people, downloaded Torrent from it**
-
-**And it was actually an Infected Activator**
-
-**Save your computer .. don't enter their site**
