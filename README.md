@@ -24,6 +24,8 @@
 ### **_Dont download from any other site, Use this P/S command Only._**
 
  ### **_Also Beware of any release from teamos-hkrg.com, which is full of malware._**
+ 
+  ### **_The only thing that matter to them, is sh$$$ A/V scan._**
 
 **Copy / Paste to PowerShell Console**
 
