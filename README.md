@@ -5,6 +5,10 @@
 
 **An advanced tool to install, activate, and config MS Office 2016, 2019, and 2021.**
 
+**Do not remove any files from Local Directory, Or you will end with Flasing Dead Skull / Bat**
+
+**The Only files that can be change, is OfficeRTool.ini, Settings.ini**
+
 
 # Main Changes
 
